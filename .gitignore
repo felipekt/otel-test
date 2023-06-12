@@ -1,5 +1,8 @@
 .DS_Store
 
 .settings
+.classpath
+.factorypath
+.project
 target/
 bin/
