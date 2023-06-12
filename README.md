@@ -4,6 +4,8 @@ project -> otel-lib -> logback -> kafka -> elastic
 
 ## Local
 
+docker run otel/opentelemetry-collector-contrib:0.79.0
+
 1. Kafka
   - bin/zookeeper-server-start.sh config/zookeeper.properties
   - ./bin/kafka-server-start.sh config/server.properties
