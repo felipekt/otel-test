@@ -2,7 +2,10 @@
 
 project -> otel-lib -> logback -> kafka -> elastic
 
-## Local
+TODO:
+  - Apply marker to avoid sending unrelated logs to kafka
+
+## Local deploy
 
 docker run otel/opentelemetry-collector-contrib:0.79.0
 
