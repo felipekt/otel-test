@@ -1,9 +1,0 @@
-otel:
-  service-name: my-dummy-service
-  lib-version: 0.0.1
-  lib-name: my-otel-lib-name
-  
-  kafka:
-    address: localhost
-    port: 9092
-    topic: spans

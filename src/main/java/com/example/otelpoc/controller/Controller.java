@@ -22,7 +22,7 @@ public class Controller {
 	@Value("${otel.lib-name}")
 	private String otelLibName;
 	
-	@Value("${otel.lib-name}")
+	@Value("${otel.lib-version}")
 	private String otelLibVersion;
 	
 	@Autowired

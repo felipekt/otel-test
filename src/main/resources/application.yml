@@ -1,9 +1,9 @@
 otel:
-  service-name: my-dummy-service
-  lib-version: 0.0.1
-  lib-name: my-otel-lib-name
+  service-name: ${SERVICE_NAME:my-dummy-service}
+  lib-name: ${LIB_NAME:my-otel-lib-name}
+  lib-version: ${LIB_VERSION:0.0.1}
   
   kafka:
-    address: localhost
-    port: 9092
-    topic: spans
+    address: ${KAFKA_ADDRESS:localhost}
+    port: ${KAFKA_PORT:9092}
+    topic: ${KAFKA_TOPIC:spans}
