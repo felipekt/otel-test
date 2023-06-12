@@ -1,9 +1,13 @@
 # otel-test
 
-project -> otel-lib -> logback -> kafka -> elastic
+project -> otel-lib -> kafka-clients -> kafka -> elastic
 
 TODO:
-  - Apply marker to avoid sending unrelated logs to kafka
+  - Manually transform span object to json and send to kafka via 
+  
+WARNING:
+  - Doesn't look practical since we wouldn't be using span.end() correctly
+  - Maybe doable if we hide span.end(), span to json routine and KafkaProducer call
 
 ## Local deploy
 
