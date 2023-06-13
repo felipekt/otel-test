@@ -1,0 +1,31 @@
+receivers:
+  otlp:
+    protocols:
+        grpc:
+
+exporters:
+  logging:
+    loglevel: debug
+  kafka:
+    brokers:
+      - host.docker.internal:9092
+    protocol_version: 3.0.0
+    encoding: otlp_json
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, kafka]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, kafka]

@@ -1,13 +1,9 @@
 # otel-test
 
-project -> otel-lib -> kafka-clients -> kafka -> elastic
+project -> otel-lib -> otel-collector-> kafka -> elastic
 
 TODO:
-  - Manually transform span object to json and send to kafka via 
-  
-WARNING:
-  - Doesn't look practical since we wouldn't be using span.end() correctly
-  - Maybe doable if we hide span.end(), span to json routine and KafkaProducer call
+  - Convert protobuf instead of using encoding: otlp_json in collector (EXPERIMENTAL)
 
 ## Local deploy
 
@@ -17,6 +13,9 @@ docker run otel/opentelemetry-collector-contrib:0.79.0
   - bin/zookeeper-server-start.sh config/zookeeper.properties
   - ./bin/kafka-server-start.sh config/server.properties
   - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic spans
+  
+2. OTel collector
+  - docker run -v /Users/t719845/Desktop/tools/otel-collector/otel-local-config.yaml:/otel-local-config.yaml -p 55681:55681 otel/opentelemetry-collector --config otel-local-config.yaml
 
 2. Elasticsearch
   - docker run --rm --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -t docker.elastic.co/elasticsearch/elasticsearch:8.8.0

@@ -2,8 +2,3 @@ otel:
   service-name: ${SERVICE_NAME:my-dummy-service}
   lib-name: ${LIB_NAME:my-otel-lib-name}
   lib-version: ${LIB_VERSION:0.0.1}
-  
-  kafka:
-    address: ${KAFKA_ADDRESS:localhost}
-    port: ${KAFKA_PORT:9092}
-    topic: ${KAFKA_TOPIC:spans}

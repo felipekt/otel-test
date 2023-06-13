@@ -1,5 +1,7 @@
 package com.example.otelpoc.otel;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +10,8 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.exporter.logging.otlp.OtlpJsonLoggingSpanExporter;
 import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
@@ -30,7 +32,13 @@ public class OtelConfig {
 				.merge(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, serviceName)));
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-				.addSpanProcessor(BatchSpanProcessor.builder(OtlpJsonLoggingSpanExporter.create()).build())
+				.addSpanProcessor(
+		                BatchSpanProcessor.builder(
+		                        OtlpGrpcSpanExporter.builder()
+		                            .setTimeout(2, TimeUnit.SECONDS)
+		                            .build())
+		                    .setScheduleDelay(100, TimeUnit.MILLISECONDS)
+		                    .build())
 				.setResource(resource).build();
 
 		SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
