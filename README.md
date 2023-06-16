@@ -4,6 +4,7 @@ project -> otel-lib -> otel-collector-> kafka -> elastic
 
 TODO:
   - Convert protobuf instead of using encoding: otlp_json in collector (EXPERIMENTAL)
+  - Make span and event attributes not string only
 
 ## Local deploy
 

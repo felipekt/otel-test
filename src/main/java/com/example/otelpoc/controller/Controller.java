@@ -8,57 +8,63 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.otelpoc.dto.SpanReq;
+import com.example.otelpoc.dto.EventData;
+import com.example.otelpoc.dto.Req;
+import com.example.otelpoc.dto.SpanData;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
 
 @RestController
 public class Controller {
-	
+
 	@Value("${otel.lib-name}")
 	private String otelLibName;
-	
+
 	@Value("${otel.lib-version}")
 	private String otelLibVersion;
-	
+
 	@Autowired
 	private OpenTelemetry otel;
 
-	@PostMapping("/span")
-	public ResponseEntity<Void> mySpan(@RequestBody SpanReq req) {
-		
-		Tracer tracer = otel.getTracer(otelLibName, otelLibVersion);
-		Span span = tracer.spanBuilder("otel-test.my-span").startSpan();
+	@PostMapping("/spans")
+	public ResponseEntity<Void> mySpan(@RequestBody Req req) {
 
-		// Make the span the current span
-		try (Scope ss = span.makeCurrent()) {
+		Tracer tracer = otel.getTracer(otelLibName, otelLibVersion);
+
+		for (SpanData sd : req.getSpanData()) {
+			Span span = tracer.spanBuilder(sd.getSpanName()).startSpan();
 			try {
-				Attributes attrs = Attributes.builder()
-						.put("testString", "value1")
-						.put("testBool", true)
-						.put("testNumber", 99)
-						.build();
-				span.setAllAttributes(attrs);
-				
-				Attributes attrsEvent = Attributes.builder()
-						.put("eventString", "value1")
-						.put("eventBool", true)
-						.put("eventNumber", 99)
-						.build();
-				span.addEvent("test event", attrsEvent);
-			    Thread.sleep(req.getSleepTime() * 1000);
+				span.makeCurrent();
+				sd.getSpanAttributes().forEach((k, v) -> {
+					span.setAttribute(k, v);
+				});
+
+				for (EventData ed : sd.getSpanEvents()) {
+					AttributesBuilder attrsEventBuilder = Attributes.builder();
+
+					ed.getEventAttributes().forEach((k, v) -> {
+						attrsEventBuilder.put(k, v);
+					});
+
+					span.addEvent(ed.getEventName(), attrsEventBuilder.build());
+				}
+				Thread.sleep(req.getSleepTime() * 1000);
 			} catch (InterruptedException ie) {
-			    Thread.currentThread().interrupt();
+				Thread.currentThread().interrupt();
+			} finally {
+				span.end();
 			}
-		} finally {
-		    span.end();
 		}
-		
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@PostMapping("/dummy")
+	public ResponseEntity<String> mySpan(@RequestBody String dummy) {
+		return new ResponseEntity<>("Nothing to see here", HttpStatus.OK);
+	}
 }
