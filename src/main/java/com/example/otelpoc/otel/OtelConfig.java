@@ -32,13 +32,9 @@ public class OtelConfig {
 				.merge(Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, serviceName)));
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-				.addSpanProcessor(
-		                BatchSpanProcessor.builder(
-		                        OtlpGrpcSpanExporter.builder()
-		                            .setTimeout(2, TimeUnit.SECONDS)
-		                            .build())
-		                    .setScheduleDelay(100, TimeUnit.MILLISECONDS)
-		                    .build())
+				.addSpanProcessor(BatchSpanProcessor
+						.builder(OtlpGrpcSpanExporter.builder().setTimeout(2, TimeUnit.SECONDS).build())
+						.setScheduleDelay(100, TimeUnit.MILLISECONDS).build())
 				.setResource(resource).build();
 
 		SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
